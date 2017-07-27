@@ -1,0 +1,1 @@
+Sample AMQ Client
