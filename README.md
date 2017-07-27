@@ -1,1 +1,2 @@
 # AMQClient
+Simple AMQ Client
