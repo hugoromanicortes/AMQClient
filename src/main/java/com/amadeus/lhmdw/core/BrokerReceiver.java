@@ -20,6 +20,8 @@
  */
 package com.amadeus.lhmdw.core;
 
+import java.util.Properties;
+
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
@@ -32,35 +34,45 @@ import javax.jms.TextMessage;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 
-import org.apache.qpid.jms.message.JmsTextMessage;
-
 public class BrokerReceiver {
-	private static final int DEFAULT_COUNT = 10;
+	
+	//private static final int DEFAULT_COUNT = 10;
+	final String INITIAL_CONTEXT_FACTORY = "org.apache.qpid.jms.jndi.JmsInitialContextFactory";
+	final String CONNECTION_JNDI_NAME = "remote";
+	final String CONNECTION_NAME = "amqp://localhost:30007";
+	final String QUEUE_JNDI_NAME = "queue";
+	final String QUEUE_NAME = "test.queue";
+	
+	private Context context;
+	private ConnectionFactory factory;
+	private Destination queue;
+	private Connection connection;
+	private Session session;
 
-	public BrokerReceiver() {
+	public BrokerReceiver() throws Exception{
+		Properties properties = new Properties();
+		properties.put(Context.INITIAL_CONTEXT_FACTORY, INITIAL_CONTEXT_FACTORY);
+		properties.put("connectionfactory." + CONNECTION_JNDI_NAME , CONNECTION_NAME);
+		properties.put("queue." + QUEUE_JNDI_NAME , QUEUE_NAME);
+		
+		this.context = new InitialContext();
+
+		this.factory = (ConnectionFactory) context.lookup("myFactoryLookup");
+		//this.factory = (ConnectionFactory) context.lookup(CONNECTION_JNDI_NAME);
+		this.queue = (Destination) context.lookup("myQueueLookup");
+		//this.queue = (Destination) context.lookup(QUEUE_JNDI_NAME);
+
+		this.connection = factory.createConnection(System.getProperty("USER"), System.getProperty("PASSWORD"));
+		this.connection.setExceptionListener(new MyExceptionListener());
+		this.connection.start();
+
+		this.session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 	}
 
 	public void receive(int nbmsgs) {
 		int count = nbmsgs;
 		try {
-			// The configuration for the Qpid InitialContextFactory has been
-			// supplied in
-			// a jndi.properties file in the classpath, which results in it
-			// being picked
-			// up automatically by the InitialContext constructor.
-			Context context = new InitialContext();
-
-			ConnectionFactory factory = (ConnectionFactory) context.lookup("myFactoryLookup");
-			Destination queue = (Destination) context.lookup("myQueueLookup");
-
-			Connection connection = factory.createConnection(System.getProperty("USER"),
-					System.getProperty("PASSWORD"));
-			connection.setExceptionListener(new MyExceptionListener());
-			connection.start();
-
-			Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-
-			MessageConsumer messageConsumer = session.createConsumer(queue);
+			MessageConsumer messageConsumer = this.session.createConsumer(queue);
 
 			long start = System.currentTimeMillis();
 

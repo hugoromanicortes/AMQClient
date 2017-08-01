@@ -11,8 +11,7 @@ public class TestBrokerReceiver {
 
 		if (args.length == 0) {
 			System.out.println("Consuming up to " + count + " messages.");
-			System.out.println(
-					"Specify a message count as the program argument if you wish to consume a different amount.");
+			System.out.println("Specify a message count as the program argument if you wish to consume a different amount.");
 		} else {
 			count = Integer.parseInt(args[0]);
 			System.out.println("Consuming up to " + count + " messages.");

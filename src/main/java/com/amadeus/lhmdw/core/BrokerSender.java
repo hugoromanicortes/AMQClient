@@ -16,10 +16,11 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 
 public class BrokerSender {
+	
 	private static final int DELIVERY_MODE = DeliveryMode.NON_PERSISTENT;
 	final String INITIAL_CONTEXT_FACTORY = "org.apache.qpid.jms.jndi.JmsInitialContextFactory";
 	final String CONNECTION_JNDI_NAME = "remote";
-	final String CONNECTION_NAME = "amqp://172.16.214.177:30002";
+	final String CONNECTION_NAME = "amqp://localhost:30007";
 	final String QUEUE_JNDI_NAME = "queue";
 	final String QUEUE_NAME = "test.queue";
 	
@@ -31,8 +32,8 @@ public class BrokerSender {
 	public BrokerSender() throws Exception{
 		Properties properties = new Properties();
 		properties.put(Context.INITIAL_CONTEXT_FACTORY, INITIAL_CONTEXT_FACTORY);
-		properties.put("connectionfactory."+CONNECTION_JNDI_NAME , CONNECTION_NAME);
-		properties.put("queue."+QUEUE_JNDI_NAME , QUEUE_NAME);
+		properties.put("connectionfactory." + CONNECTION_JNDI_NAME , CONNECTION_NAME);
+		properties.put("queue." + QUEUE_JNDI_NAME , QUEUE_NAME);
 		
 		this.context = new InitialContext(properties);
 		
