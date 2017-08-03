@@ -20,7 +20,7 @@ public class BrokerSender {
 	private static final int DELIVERY_MODE = DeliveryMode.NON_PERSISTENT;
 	final String INITIAL_CONTEXT_FACTORY = "org.apache.qpid.jms.jndi.JmsInitialContextFactory";
 	final String CONNECTION_JNDI_NAME = "remote";
-	final String CONNECTION_NAME = "amqp://localhost:30007";
+	final String CONNECTION_NAME = "amqp://amq63-app-pub:5672";
 	final String QUEUE_JNDI_NAME = "queue";
 	final String QUEUE_NAME = "test.queue";
 	
